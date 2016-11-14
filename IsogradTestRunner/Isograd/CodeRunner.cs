@@ -125,12 +125,15 @@ namespace IsogradTestRunner.Isograd
         {
             var maxLength = Math.Max(expectedOutputLines.Max(l => l.Length), "Expecting: ".Length);
 
-            Console.Write("Expecting: ".PadRight(maxLength), Color.DimGray);
-            Console.WriteLine("Was:", Color.White);
-            for (int i = 0; i < expectedOutputLines.Count; i++)
+            Console.Write("Expected: ".PadRight(maxLength), Color.DimGray);
+            Console.WriteLine("Actual:", Color.White);
+            for (int i = 0; i < Math.Max(expectedOutputLines.Count, actualOutputLines.Count); i++)
             {
-                Console.Write(expectedOutputLines[i].PadRight(maxLength), Color.DimGray);
-                Console.WriteLine(actualOutputLines?[i], Color.White);
+                var expectedLine = i < expectedOutputLines.Count ? expectedOutputLines[i] : string.Empty;
+                var actualLine   = i < actualOutputLines.Count   ? actualOutputLines[i]   : string.Empty;
+
+                Console.Write(expectedLine.PadRight(maxLength), Color.DimGray);
+                Console.WriteLine(actualLine, Color.White);
             }
         }
 

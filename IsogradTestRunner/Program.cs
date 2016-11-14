@@ -8,23 +8,23 @@ namespace IsogradTestRunner
     {
         public static void Main(string[] args)
         {
-            const string directory = @"D:\Workspace\CSharp\Isograd\BattleDevRegionsJob_Novembre2016";
-
-            if (!Directory.Exists(directory))
+            var codeRunnerParam = new CodeRunnerParameters();
+            if (CommandLine.Parser.Default.ParseArguments(args, codeRunnerParam))
             {
-                Console.WriteLine(directory + " don't exist !");
-                return;
+                if (!Directory.Exists(codeRunnerParam.Directory))
+                {
+                    Console.WriteLine(codeRunnerParam.Directory + " don't exist !");
+                    Console.WriteLine();
+                    Console.WriteLine(codeRunnerParam.GetUsage());
+                    Console.ReadKey();
+                    return;
+                }
+
+                using (new CodeWatcher(codeRunnerParam))
+                {
+                    Console.ReadLine();
+                }
             }
-
-            var isogradParameters = new CodeRunnerParameters
-            {
-                Directory = directory
-            };
-
-            using (new CodeWatcher(isogradParameters))
-            {
-                Console.ReadLine();
-            }            
         }
     }
 }
