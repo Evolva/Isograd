@@ -19,7 +19,7 @@ namespace IsogradTestRunner.Isograd
                 Path = _parameters.Directory,
                 IncludeSubdirectories = true,
                 Filter = "*.cs",
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Security,
                 EnableRaisingEvents = true,
             };
            
