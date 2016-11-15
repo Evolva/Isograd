@@ -43,8 +43,9 @@ namespace IsogradTestRunner.Isograd
                         syntaxTrees: new[] { CSharpSyntaxTree.ParseText(FileWithoutLock.ReadAllText(_sourceCodeFile)) },
                         references: new []
                         {
-                            MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                            MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
+                            MetadataReference.CreateFromFile(typeof(object).Assembly.Location),      //mscorlib.dll
+                            MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),  //System.Core.dll
+                            MetadataReference.CreateFromFile(typeof(Uri).Assembly.Location)          //System.dll
                         },
                         options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                     );
