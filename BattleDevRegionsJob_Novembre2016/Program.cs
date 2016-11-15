@@ -8,7 +8,7 @@ namespace BattleDevRegionsJob_Novembre2016
     {
         public static void Main()
         {
-            Console.SetIn(File.OpenText(@"..\..\5.Snowboarding\input1.txt"));
+            Console.SetIn(File.OpenText(@"..\..\5.Snowboarding\input2.txt"));
             Snowboarding.Solve();
         }
     }
