@@ -44,9 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\StringReaderExtensions.cs" />
     <Compile Include="Helpers\CompilationHelper.cs" />
     <Compile Include="Helpers\FileWithoutLock.cs" />
+    <Compile Include="Helpers\PoorManDebouncer.cs" />
     <Compile Include="Isograd\CodeRunner.cs" />
     <Compile Include="Isograd\CodeRunnerParameters.cs" />
     <Compile Include="Isograd\CodeWatcher.cs" />

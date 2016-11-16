@@ -109,7 +109,7 @@ namespace IsogradTestRunner.Isograd
             var success = CompareOutput(actualOutputLines, expectedOutputLines);
             var sucessLabel = success ? "OK" : "KO";
 
-            Console.WriteLineStyled($"Running test : {Path.GetFileName(inputFile)} {sucessLabel}", _styleSheet);
+            Console.WriteLineStyled($"[{Path.GetFileName(_sourceCodeFile)}] Running test : {Path.GetFileName(inputFile)} {sucessLabel}", _styleSheet);
 
             if (!success)
             {

@@ -7,11 +7,17 @@ namespace BattleDevRegionsJob_Novembre2016._5.Snowboarding
 {
     public class Snowboarding
     {
+        public static void Solve() { }
+    }
+
+    #region seems to be working, but to slow for isograd ;'(
+    public class Slowboarding
+    {
         public static void Solve()
         {
             var input = Console.In;
             var size = int.Parse(input.ReadLine());
- 
+
             var circles = Enumerable
                 .Range(0, size)
                 .Select(_ => input.ReadLine())
@@ -23,14 +29,26 @@ namespace BattleDevRegionsJob_Novembre2016._5.Snowboarding
             var backgroundCircle = new Circle(100000 / 2, 100000 / 2, 100000 * 2, 0);
             circles.Add(backgroundCircle);
 
-            Func<Circle, Circle, bool> directionLarger = (c1, c2) => c1.IsIncludeIn(c2);
-            Func<Circle, Circle, bool> directionSmaller = (c1, c2) => c1.IsInsideOf(c2);
+            var availableNeighborsFrom = circles.ToDictionary(
+                keySelector: c => c,
+                elementSelector: c =>
+                {
+                    var insideCurrentCircle = circles.Where(x => x.IsInsideOf(c)).ToList();
+                    var butNotInsideAnotherSmallerCircle = insideCurrentCircle.Where(x => !insideCurrentCircle.Any(y => x.IsInsideOf(y))).ToList();
+
+                    var firstBiggerCircle = circles.Where(x => x.IsIncludeIn(c)).OrderBy(x => x.R).FirstOrDefault();
+                    if (firstBiggerCircle != null)
+                    {
+                        butNotInsideAnotherSmallerCircle.Add(firstBiggerCircle);
+                    }
+                    return butNotInsideAnotherSmallerCircle;
+                });
 
             var decisionTree = new Tree<State>(new State(0, Enumerable.Empty<Circle>(), null));
 
             foreach (var circle in circles)
             {
-                decisionTree.AddChildren(new State(0, new[] {circle}, circle));
+                decisionTree.AddChildren(new State(0, new[] { circle }, circle));
             }
 
             var stack = new Stack<Tree<State>>(decisionTree.Children);
@@ -40,18 +58,12 @@ namespace BattleDevRegionsJob_Novembre2016._5.Snowboarding
                 var elt = stack.Pop();
                 var currentCircle = elt.NodeState.CurrentCircle;
 
-                var direction = elt.NodeState.AlreadyVisitedCircles.Contains(backgroundCircle)
-                    ? directionSmaller
-                    : directionLarger;
-
-                var potentialChildren = circles.Where(x => direction(x, currentCircle));
-
-                var possibleChildren = potentialChildren.Except(elt.NodeState.AlreadyVisitedCircles);
+                var possibleChildren = availableNeighborsFrom[currentCircle].Except(elt.NodeState.AlreadyVisitedCircles);
 
                 foreach (var child in possibleChildren)
                 {
                     var heightDifference = elt.NodeState.SumHeighDifference + currentCircle.HeightDifference(child);
-                    var newChild = elt.AddChildren(new State(heightDifference, elt.NodeState.AlreadyVisitedCircles.Union(new[] {child}),
+                    var newChild = elt.AddChildren(new State(heightDifference, elt.NodeState.AlreadyVisitedCircles.Union(new[] { child }),
                         child));
 
                     stack.Push(newChild);
@@ -128,9 +140,9 @@ namespace BattleDevRegionsJob_Novembre2016._5.Snowboarding
                 unchecked
                 {
                     var hashCode = X;
-                    hashCode = (hashCode*397) ^ Y;
-                    hashCode = (hashCode*397) ^ R;
-                    hashCode = (hashCode*397) ^ H;
+                    hashCode = (hashCode * 397) ^ Y;
+                    hashCode = (hashCode * 397) ^ R;
+                    hashCode = (hashCode * 397) ^ H;
                     return hashCode;
                 }
             }
@@ -174,4 +186,5 @@ namespace BattleDevRegionsJob_Novembre2016._5.Snowboarding
             }
         }
     }
+    #endregion
 }
