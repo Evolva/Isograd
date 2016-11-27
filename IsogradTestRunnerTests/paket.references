@@ -1,0 +1,7 @@
+Microsoft.CodeAnalysis.CSharp
+Colorful.Console
+CommandLineParser
+
+group Tests
+	NUnit
+	NFluent

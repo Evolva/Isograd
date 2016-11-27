@@ -59,10 +59,14 @@ namespace IsogradTestRunner.Isograd
                             .GetMethod(_parameters.StaticMethodToRun),
                     onErrorAction: diagnostic =>
                     {
+                        var sourceFileName = Path.GetFileName(_sourceCodeFile);
+
                         if (diagnostic.Severity == DiagnosticSeverity.Error || diagnostic.IsWarningAsError)
                         {
+                            var lineSpan = diagnostic.Location.GetMappedLineSpan();
+                            var startLine = lineSpan.StartLinePosition.Line + 1;
                             var color = diagnostic.IsWarningAsError ? Color.Orange : Color.Red;
-                            Console.WriteLine($"{diagnostic.Location.ToString()}:{diagnostic.Id}: {diagnostic.GetMessage()}", color);
+                            Console.WriteLine($"{sourceFileName} L{startLine} : {diagnostic.Id}: {diagnostic.GetMessage()}", color);
                         }
                     });
             RunTests(buildedMethod);

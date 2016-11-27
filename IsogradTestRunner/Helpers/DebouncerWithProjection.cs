@@ -5,15 +5,14 @@ using System.Timers;
 
 namespace IsogradTestRunner.Helpers
 {
-    public class PoorManDebouncer<T, TProjection>
-        where TProjection : IEquatable<TProjection>
+    public class DebouncerWithProjection<T, TProjection> where TProjection : IEquatable<TProjection>
     {
         private readonly Action<T> _actionToDebounce;
         private readonly Func<T, TProjection> _debounceBy;
         private readonly TimeSpan _delay;
         private readonly IDictionary<TProjection, Timer> _timerByProjectionValue;
 
-        public PoorManDebouncer(Action<T> actionToDebounce, Func<T, TProjection> debounceBy, TimeSpan delay)
+        public DebouncerWithProjection(Action<T> actionToDebounce, Func<T, TProjection> debounceBy, TimeSpan delay)
         {
             _actionToDebounce = actionToDebounce;
             _debounceBy = debounceBy;
@@ -40,5 +39,10 @@ namespace IsogradTestRunner.Helpers
             timer.Stop();
             timer.Start();
         }
+    }
+
+    public class Debouncer<T> : DebouncerWithProjection<T, T> where T : IEquatable<T>
+    {
+        public Debouncer(Action<T> actionToDebounce, TimeSpan delay) : base(actionToDebounce, x => x, delay) { }
     }
 }

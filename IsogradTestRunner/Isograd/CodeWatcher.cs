@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using IsogradTestRunner.Extensions;
 using IsogradTestRunner.Helpers;
@@ -14,14 +15,17 @@ namespace IsogradTestRunner.Isograd
         private readonly CodeRunnerParameters _parameters;
         private readonly FileSystemWatcher _fsw;
         private readonly BlockingCollection<string> _workQueue;
-        private readonly PoorManDebouncer<FileSystemEventArgs, string> _debouncer;
+        private readonly DebouncerWithProjection<FileSystemEventArgs, string> _debouncerWithProjection;
 
         public CodeWatcher(CodeRunnerParameters parameters)
         {
             _parameters = parameters;
 
             _workQueue = new BlockingCollection<string>();
-            _debouncer = new PoorManDebouncer<FileSystemEventArgs, string>(
+
+            if (_parameters.ForceInitialRun) { ForceInitialRun(); }
+
+            _debouncerWithProjection = new DebouncerWithProjection<FileSystemEventArgs, string>(
                 actionToDebounce: evt =>
                 {
                     Console.WriteLine($"INFO: {Path.GetFileName(evt.FullPath)} changed detected !", Color.SaddleBrown);
@@ -48,7 +52,20 @@ namespace IsogradTestRunner.Isograd
 
         private void OnSourceFileChanged(object _, FileSystemEventArgs fileSystemEventArgs)
         {
-            _debouncer.DebouncedActionFor(fileSystemEventArgs);
+            _debouncerWithProjection.DebouncedActionFor(fileSystemEventArgs);
+        }
+
+        private void ForceInitialRun()
+        {
+            var allSourceFiles = Directory.GetFiles(_parameters.Directory, "*.cs", SearchOption.AllDirectories);
+
+            foreach (var sourceFile in allSourceFiles)
+            {
+                var sourceFIleDirectory = Path.GetDirectoryName(sourceFile);
+                var inputFiles = Directory.GetFiles(sourceFIleDirectory, _parameters.InputFilePattern, SearchOption.TopDirectoryOnly);
+                if (!inputFiles.Any()) { continue; }
+                new CodeRunner(sourceFile, inputFiles, _parameters).CompileAndRunTests();
+            }
         }
 
         private void StartConsumingTask()

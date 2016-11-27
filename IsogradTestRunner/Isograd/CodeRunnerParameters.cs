@@ -12,6 +12,9 @@ namespace IsogradTestRunner.Isograd
         [Option(longName: "method", shortName: 'm', DefaultValue = "Solve", HelpText = "Name of the method to run")]
         public string StaticMethodToRun { get; set; }
 
+        [Option(longName: "force", shortName: 'f', DefaultValue = false, HelpText = "Force an initial run of every tests")]
+        public bool ForceInitialRun { get; set; }
+
         public string InputFilePattern  { get; private set; } = "input*.txt";
         
         [HelpOption]
